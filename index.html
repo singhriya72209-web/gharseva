@@ -1,362 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>GharSeva - 0% Commission Direct Home Services</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="GharSeva — Direct, zero-commission local technician marketplace.">
+  <title>GharSeva — Direct • Zero Commission</title>
+
+  <!-- GitHub Pages compatible: Tailwind is the only external runtime dependency. -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          boxShadow: {
+            tactile: '0 10px 30px rgba(15, 23, 42, .08)',
+            soft: '0 4px 18px rgba(15, 23, 42, .06)'
+          },
+          animation: {
+            'slide-in': 'slideIn .25s ease-out',
+            'fade-in': 'fadeIn .2s ease-out'
+          },
+          keyframes: {
+            slideIn: {
+              '0%': { transform: 'translateX(100%)', opacity: '0' },
+              '100%': { transform: 'translateX(0)', opacity: '1' }
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(5px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+
   <style>
-    body { background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    .tactile-card {
-      background: #ffffff;
-      border: 1.5px solid #E2E8F0;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
-      transition: transform 0.15s ease, border-color 0.15s ease;
+    html { scroll-behavior: smooth; }
+    body { min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    button, input, select, textarea { font: inherit; }
+    .pressable { transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
+    .pressable:active { transform: scale(.97); }
+    .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+    .drawer-backdrop { background: rgba(15,23,42,.45); backdrop-filter: blur(3px); }
+    .no-scroll { overflow: hidden; }
+    .pin-code { letter-spacing: .3em; }
+    .photo-preview { aspect-ratio: 1/1; object-fit: cover; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; transition-duration: .001ms !important; }
     }
-    .tactile-card:active { transform: scale(0.96); border-color: #94A3B8; }
   </style>
 </head>
-<body class="text-slate-900 min-h-screen flex flex-col justify-between antialiased">
 
-  <!-- Header -->
-  <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40">
-    <div class="max-w-md mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-2.5 cursor-pointer" onclick="showView('customer')">
-        <div class="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center shadow-md">
-          <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="m9 12 2 2 4-4"/>
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center space-x-1.5">
-            <span class="text-lg font-black tracking-tight text-slate-900">GharSeva</span>
-            <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-emerald-200">VERIFIED</span>
-          </div>
-          <p class="text-[9px] font-extrabold text-slate-400 tracking-wider uppercase">DIRECT • ZERO COMMISSION</p>
-        </div>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <div class="flex items-center bg-slate-100 rounded-full px-3 py-1.5 border border-slate-200 text-xs font-semibold text-slate-700">
-          <svg class="w-3.5 h-3.5 mr-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          <input id="pincodeInput" type="text" placeholder="Pincode" maxlength="6" value="497557" class="bg-transparent outline-none w-16 font-bold text-slate-800" oninput="renderCategoryView()" />
-        </div>
-        <button onclick="toggleMenu(true)" class="p-2 rounded-xl bg-slate-100 border border-slate-200 active:scale-95">
-          <svg class="w-5 h-5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" x2="20" y1="12" y2="12"/>
-            <line x1="4" x2="20" y1="6" y2="6"/>
-            <line x1="4" x2="20" y1="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Side Menu Drawer -->
-  <div id="drawerBackdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden" onclick="toggleMenu(false)"></div>
-  <div id="sideDrawer" class="fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out">
-    <div>
-      <div class="flex justify-between items-center pb-4 border-b border-slate-100">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">GharSeva Menu</h2>
-          <p class="text-[11px] text-slate-400">Direct Local Network</p>
-        </div>
-        <button onclick="toggleMenu(false)" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
-      </div>
-      <div class="mt-6 space-y-2.5">
-        <button onclick="showView('customer')" class="w-full flex items-center space-x-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left font-bold text-xs text-slate-800">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Customer Directory</span>
-        </button>
-        <button onclick="showView('partner')" class="w-full flex items-center space-x-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left font-bold text-xs text-slate-800">
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          <span>Technician Partner Portal</span>
-        </button>
-        <button onclick="showView('admin')" class="w-full flex items-center space-x-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left font-bold text-xs text-slate-800">
-          <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-          <span>Admin Console (Master PIN)</span>
-        </button>
-      </div>
-    </div>
-    <div class="p-4 bg-slate-50 rounded-2xl border text-center">
-      <p class="text-[11px] font-bold text-slate-700">100% Direct Peer-to-Peer</p>
-      <p class="text-[10px] text-slate-400 mt-0.5">Pay direct to technician • 0% Middleman Fee</p>
-    </div>
-  </div>
-
-  <!-- MAIN VIEW CONTAINER -->
-  <main class="max-w-md mx-auto w-full p-4 flex-grow">
-    
-    <!-- 1. CUSTOMER VIEW -->
-    <div id="customerView">
-      <div class="mb-5 mt-2">
-        <h2 class="text-[24px] font-extrabold tracking-tight text-slate-900 leading-tight">Book Verified Local Technicians Directly</h2>
-        <p class="text-xs font-medium text-slate-500 mt-1">Background verified specialists. Direct Cash/UPI payment with zero commission.</p>
-        <div class="mt-3 inline-flex items-center px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[11px] font-bold text-emerald-800">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-          Live Camera Verified • Active On-Duty Pros
-        </div>
-      </div>
-
-      <!-- Categories Grid -->
-      <div id="categoryGridSection">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Select Service Category</h3>
-        <div class="grid grid-cols-2 gap-3 mb-6">
-          
-          <!-- Electrician -->
-          <div onclick="openCategory('Electrician')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-3 text-amber-600 border border-amber-100">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Electrician</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Wiring, Fans, MCB, Inverter</p>
-          </div>
-
-          <!-- Plumber -->
-          <div onclick="openCategory('Plumber')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3 text-blue-600 border border-blue-100">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Plumber</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Pipe Leakage, Taps, Tanks</p>
-          </div>
-
-          <!-- Home Appliance -->
-          <div onclick="openCategory('Home Appliance')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center mb-3 text-sky-600 border border-sky-100">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Home Appliance</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">AC, Fridge, Washing Machine</p>
-          </div>
-
-          <!-- Carpenter -->
-          <div onclick="openCategory('Carpenter')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-3 text-orange-600 border border-orange-100">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 3.26-1.57-1.57a2.12 2.12 0 0 0-3 0l-2.12 2.12 4.57 4.57 2.12-2.12a2.12 2.12 0 0 0 0-3z"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Carpenter</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Doors, Locks, Furniture</p>
-          </div>
-
-          <!-- Painter -->
-          <div onclick="openCategory('Painter')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-3 text-emerald-600 border border-emerald-100">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="6" x="3" y="3" rx="2"/><path d="M19 9v1a3 3 0 0 1-3 3h-4a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2H6"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Painter & Putty</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Wall Paint, Seepage, Putty</p>
-          </div>
-
-          <!-- Mason -->
-          <div onclick="openCategory('Mason')" class="tactile-card rounded-3xl p-5 cursor-pointer">
-            <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mb-3 text-slate-700 border border-slate-200">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 9v6"/><path d="M15 3v6"/><path d="M15 15v6"/></svg>
-            </div>
-            <h4 class="font-bold text-sm text-slate-900">Mason & Civil</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Plaster, Tiles, Brickwork</p>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Detail View of Selected Category -->
-      <div id="categoryDetailSection" class="hidden">
-        <div class="flex justify-between items-center mb-4">
-          <div>
-            <h3 id="catDetailTitle" class="font-black text-lg text-slate-900">Category Services</h3>
-            <p class="text-[11px] text-slate-400">Select exact task or request direct technician visit</p>
-          </div>
-          <button onclick="closeCategory()" class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3.5 py-1.5 rounded-xl">← Back</button>
-        </div>
-
-        <!-- Sub-services list -->
-        <div class="tactile-card rounded-3xl p-4 mb-4">
-          <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider mb-2.5">Available Services & Fixes</h4>
-          <div id="subservicesList" class="space-y-2 text-xs"></div>
-        </div>
-
-        <!-- Rate Card -->
-        <div class="tactile-card rounded-2xl p-3.5 mb-4 bg-slate-50 border border-slate-200 text-xs">
-          <div class="flex justify-between font-bold text-slate-800">
-            <span>Standard Visiting & Inspection Fee:</span>
-            <span class="text-emerald-700 font-extrabold">₹149 - ₹199</span>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1">Direct labor settlement to the specialist. GharSeva charges 0% commission.</p>
-        </div>
-
-        <!-- Pros or Fallback Direct Form -->
-        <div id="prosListingArea"></div>
-      </div>
-    </div>
-
-    <!-- 2. PARTNER PORTAL -->
-    <div id="partnerView" class="hidden">
-      <div class="mb-5 mt-2">
-        <h2 class="text-2xl font-black text-slate-900">Technician Operating Portal</h2>
-        <p class="text-xs font-medium text-slate-500 mt-1">Direct leads. Instant On-Duty Switch.</p>
-      </div>
-
-      <div class="tactile-card rounded-3xl p-6 mb-5">
-        <h3 class="font-bold text-sm text-slate-900 mb-3 pb-2 border-b">New Technician Registration</h3>
-        <div class="space-y-3 text-xs">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Full Legal Name</label>
-            <input id="pName" type="text" placeholder="e.g. Ramesh Kumar" class="w-full p-2.5 rounded-xl border outline-none" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Calling Mobile Number</label>
-            <input id="pPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full p-2.5 rounded-xl border outline-none" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Trade Category</label>
-            <select id="pTrade" class="w-full p-2.5 rounded-xl border outline-none bg-white font-bold">
-              <option value="Electrician">Electrician</option>
-              <option value="Plumber">Plumber</option>
-              <option value="Home Appliance">Home Appliance</option>
-              <option value="Carpenter">Carpenter</option>
-              <option value="Painter">Painter</option>
-              <option value="Mason">Mason</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Operating Pincode</label>
-            <input id="pPincode" type="text" maxlength="6" placeholder="e.g. 497557" class="w-full p-2.5 rounded-xl border outline-none" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Live Camera Selfie</label>
-            <input id="pPhoto" type="file" accept="image/*" capture="user" class="w-full text-slate-500 text-xs" onchange="previewSelfie(event)" />
-            <img id="selfiePreview" class="w-16 h-16 rounded-xl object-cover mt-2 border hidden" />
-          </div>
-          <button onclick="registerPartner()" class="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl active:scale-98">
-            Submit for Admin Approval
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. ADMIN CONSOLE -->
-    <div id="adminView" class="hidden">
-      <div id="adminLoginBlock" class="tactile-card rounded-3xl p-8 text-center mt-6">
-        <h2 class="text-base font-bold text-slate-900">Administrator Console</h2>
-        <p class="text-xs text-slate-400 mb-3">Master Passkey: admin1234</p>
-        <input id="adminPin" type="password" placeholder="••••" class="p-2.5 rounded-xl border text-center font-bold tracking-widest outline-none w-36 mb-3" />
-        <br />
-        <button onclick="verifyAdmin()" class="px-6 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl">Unlock</button>
-      </div>
-
-      <div id="adminDashboardBlock" class="hidden space-y-4">
-        <div class="flex justify-between items-center pb-2 border-b">
-          <h2 class="text-lg font-black text-slate-900">Admin Control Panel</h2>
-          <button onclick="logoutAdmin()" class="text-xs text-red-500 font-bold">Lock</button>
-        </div>
-        <div id="adminProsContainer" class="space-y-3"></div>
-      </div>
-    </div>
-
-  </main>
+<body class="bg-[#F8FAFC] text-slate-900">
+  <div id="app" class="min-h-screen"></div>
 
   <script>
-    const SUB_SERVICES = {
-      'Electrician': [
-        'Ceiling Fan Repair & New Fitting',
-        'Short Circuit & MCB Trip Diagnosis',
-        'Inverter & Battery Wiring Setup',
-        'Switchboard & Heavy Point Installation',
-        'LED Concealed Lighting & Chandelier'
-      ],
-      'Plumber': [
-        'Tap / Faucet Leakage & Replacement',
-        'Overhead Water Tank Fitting & Cleaning',
-        'Water Motor / Submersible Pump Fix',
-        'Drain / Pipe Unclogging',
-        'Flush Tank & Commode Seat Repair'
-      ],
-      'Home Appliance': [
-        'AC Repair, Jet Service & Gas Refill',
-        'Refrigerator Cooling & Compressor Fix',
-        'Washing Machine Motor & Drum Repair',
-        'Room Cooler Motor & Pump Service',
-        'Geyser Repair & Fitting'
-      ],
-      'Carpenter': [
-        'Door Lock, Latch & Handle Repair',
-        'Door / Window Alignment & Hinges',
-        'Bed & Wardrobe Assembly',
-        'Drawer Slides & Kitchen Woodwork'
-      ],
-      'Painter': [
-        'Wall Seepage (सीलन) Waterproofing',
-        'Crack Putty & Wall Sanding',
-        'Single Room / House Fresh Painting',
-        'Exterior Weathercoat Paint'
-      ],
-      'Mason': [
-        'Broken Floor & Wall Tile Replacement',
-        'Wall Plaster & Minor Masonry Fix',
-        'Kitchen Slab Granite Fitting',
-        'Terrace Water Slope Repair'
-      ]
+    'use strict';
+
+    /* =========================================================
+       GHARSEVA — SINGLE FILE APP
+       Storage:
+         gharseva_technicians_v1
+       Security note:
+         The Admin PIN is intentionally client-side because this is
+         a static GitHub Pages application. It is NOT a secure backend.
+       ========================================================= */
+
+    const ADMIN_PIN = 'admin1234';
+    const TECH_KEY = 'gharseva_technicians_v1';
+    const BOOKING_KEY = 'gharseva_bookings_v1';
+
+    const SERVICES = {
+      electrician: {
+        id: 'electrician',
+        name: 'Electrician',
+        icon: 'bolt',
+        accent: 'amber',
+        description: 'Safe electrical work, repairs & setup',
+        subServices: [
+          ['Wiring', 'Inspection + labour benchmark'],
+          ['Ceiling Fan Repair', 'Repair / installation labour'],
+          ['MCB / Short Circuit', 'Fault finding + repair labour'],
+          ['Inverter Setup', 'Installation / wiring labour'],
+          ['Switchboards', 'Replacement / repair labour']
+        ]
+      },
+      plumber: {
+        id: 'plumber',
+        name: 'Plumber',
+        icon: 'droplet',
+        accent: 'sky',
+        description: 'Leakage, pumps, pipes & sanitary work',
+        subServices: [
+          ['Tap / Faucet Leakage', 'Leak diagnosis + repair labour'],
+          ['Water Tank Cleaning', 'Tank cleaning labour'],
+          ['Water Motor / Pump Fix', 'Diagnosis + repair labour'],
+          ['Pipe Blockage', 'Blockage diagnosis + clearing labour'],
+          ['Flush Tank', 'Flush repair / replacement labour']
+        ]
+      },
+      appliance: {
+        id: 'appliance',
+        name: 'Home Appliance',
+        icon: 'appliance',
+        accent: 'violet',
+        description: 'AC, fridge, washing machine & more',
+        subServices: [
+          ['AC Repair & Jet Service', 'Inspection + service labour'],
+          ['Refrigerator Cooling', 'Diagnosis + repair labour'],
+          ['Washing Machine', 'Diagnosis + repair labour'],
+          ['Room Cooler', 'Diagnosis + repair labour'],
+          ['Geyser', 'Diagnosis + repair labour']
+        ]
+      },
+      carpenter: {
+        id: 'carpenter',
+        name: 'Carpenter',
+        icon: 'hammer',
+        accent: 'orange',
+        description: 'Doors, furniture, locks & woodwork',
+        subServices: [
+          ['Door Locks / Handles', 'Fitting / repair labour'],
+          ['Window / Door Alignment', 'Adjustment labour'],
+          ['Bed / Wardrobe Assembly', 'Assembly labour'],
+          ['Wooden Repair', 'Repair labour']
+        ]
+      },
+      painter: {
+        id: 'painter',
+        name: 'Painter & Putty',
+        icon: 'paint',
+        accent: 'rose',
+        description: 'Putty, painting & seepage protection',
+        subServices: [
+          ['Wall Seepage / सीलन Waterproofing', 'Inspection + labour benchmark'],
+          ['Crack Putty', 'Surface preparation + labour'],
+          ['Room Painting', 'Painting labour benchmark'],
+          ['Weathercoat', 'Exterior coating labour']
+        ]
+      },
+      civil: {
+        id: 'civil',
+        name: 'Mason & Civil',
+        icon: 'brick',
+        accent: 'emerald',
+        description: 'Tiles, plaster, slabs & terrace work',
+        subServices: [
+          ['Broken Floor / Wall Tiles', 'Removal + fixing labour'],
+          ['Wall Plaster', 'Plastering labour benchmark'],
+          ['Kitchen Slab Granite', 'Installation labour benchmark'],
+          ['Terrace Water Slope', 'Slope correction labour']
+        ]
+      }
     };
 
-    let activeCategory = null;
-    let selfieBase64 = "";
+    const ACCENTS = {
+      amber:  { bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-100', icon: 'bg-amber-100' },
+      sky:    { bg: 'bg-sky-50', text: 'text-sky-700', ring: 'ring-sky-100', icon: 'bg-sky-100' },
+      violet: { bg: 'bg-violet-50', text: 'text-violet-700', ring: 'ring-violet-100', icon: 'bg-violet-100' },
+      orange: { bg: 'bg-orange-50', text: 'text-orange-700', ring: 'ring-orange-100', icon: 'bg-orange-100' },
+      rose:   { bg: 'bg-rose-50', text: 'text-rose-700', ring: 'ring-rose-100', icon: 'bg-rose-100' },
+      emerald:{ bg: 'bg-emerald-50', text: 'text-emerald-700', ring: 'ring-emerald-100', icon: 'bg-emerald-100' }
+    };
 
-    function getPros() { return JSON.parse(localStorage.getItem('gs_pros') || '[]'); }
-    function setPros(d) { localStorage.setItem('gs_pros', JSON.stringify(d)); }
+    const state = {
+      screen: 'customer',
+      selectedCategory: null,
+      pincode: '',
+      drawer: false,
+      adminUnlocked: false,
+      adminInput: '',
+      technicianPhoto: '',
+      technicianPhotoName: '',
+      searchError: '',
+      toast: null,
+      directBooking: null,
+      bookingName: '',
+      bookingMobile: '',
+      bookingAddress: '',
+      bookingSubmitting: false
+    };
 
-    function toggleMenu(show) {
-      document.getElementById('drawerBackdrop').classList.toggle('hidden', !show);
-      document.getElementById('sideDrawer').classList.toggle('translate-x-full', !show);
+    function esc(value) {
+      return String(value ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+      }[c]));
     }
 
-    function showView(view) {
-      toggleMenu(false);
-      document.getElementById('customerView').classList.add('hidden');
-      document.getElementById('partnerView').classList.add('hidden');
-      document.getElementById('adminView').classList.add('hidden');
-      document.getElementById(view + 'View').classList.remove('hidden');
+    function getTechnicians() {
+      try {
+        const raw = localStorage.getItem(TECH_KEY);
+        const data = raw ? JSON.parse(raw) : [];
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
     }
 
-    function openCategory(cat) {
-      activeCategory = cat;
-      document.getElementById('categoryGridSection').classList.add('hidden');
-      document.getElementById('categoryDetailSection').classList.remove('hidden');
-      document.getElementById('catDetailTitle').innerText = cat + " Services";
-
-      const subContainer = document.getElementById('subservicesList');
-      subContainer.innerHTML = SUB_SERVICES[cat].map(function(s) {
-        return '<div class="flex items-center space-x-2.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100">' +
-          '<span class="w-2 h-2 rounded-full bg-emerald-500"></span>' +
-          '<span class="font-bold text-slate-700">' + s + '</span>' +
-        '</div>';
-      }).join('');
-
-      renderCategoryView();
+    function saveTechnicians(list) {
+      localStorage.setItem(TECH_KEY, JSON.stringify(list));
     }
 
-    function closeCategory() {
-      activeCategory = null;
-      document.getElementById('categoryDetailSection').classList.add('hidden');
-      document.getElementById('categoryGridSection').classList.remove('hidden');
+    function getBookings() {
+      try {
+        const raw = localStorage.getItem(BOOKING_KEY);
+        const data = raw ? JSON.parse(raw) : [];
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
     }
 
-    function renderCategoryView() {
-      if (!activeCategory) return;
-      const container = document.getElementById('prosListingArea');
-      const pin = document.getElementById('pincodeInput').value.trim();
-      const pros = getPros();
+    function saveBookings(list) {
+      localStorage.setItem(BOOKING_KEY, JSON.stringify(list));
+    }
 
-      const activePros = pros.filter(function(p) {
-        return p.trade === activeCategory && p.isApproved && p.isOnDuty && (!pin || p.pincode === pin);
-      });
+    function uid(prefix = 'GS') {
+      const stamp = Date.now().toString(36).toUpperCase();
+      const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
+      return `${prefix}-${stamp}-${rand}`;
+    }
 
-      if (activePros.length === 0) {
-        container.innerHTML = '<div class="tactile-card rounded-3xl p-5">' +
-          '<div class="flex items-center space-x-2 text-slate-800 font-bold mb
+    function pin4() {
+      return String(Math.floor(1000 + Math.random() * 9000));
+    }
+
+    function digitsOnly(value) {
+      return String(value || '').replace(/\D/g, '');
+    }
+
+    function validMobile(value) {
+      return /^[6-9]\d{9}$/.test(digitsOnly(value));
+    }
+
+    function validPincode(value) {
+      return /^\d{6}$/.test(digitsOnly(value));
+    }
+
+    function toast(message, type = 'success') {
+      state.toast = { message, type };
+      render();
+      window.clearTimeout(toast.timer);
+      toast.timer = window.setTimeout(() => {
+        state.toast = null;
+        render();
+      }, 3200);
+    }
+
+    /* ---------------------- SVG SYSTEM ---------------------- */
+    function svg(name, cls = 'w-6 h-6', extra = '') {
+      const base = `class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}`;
+      const paths = {
+        shield: `<path d="M12 3 19 6v5c0 4.8-2.9 8.6-7 10-4.1-1.4-7-5.2-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/>`,
+        menu: `<path d="M4 6h16M4 12h16M4 18h16"/>`,
+        close: `<path d="m6 6 12 12M18 6 6 18"/>`,
+        back: `<path d="m15 18-6-6 6-6"/><path d="M9 12h11"/>`,
+        bolt: `<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>`,
+        droplet: `<path d="M12 3s6 6.1 6 11a6 6 0 1 1-12 0c0-4.9 6-11 6-11Z"/><path d="M9.5 16.5c.6 1 1.4 1.5 2.5 1.5"/>`,
+        appliance: `<rect x="5" y="2.8" width="14" height="18.4" rx="2"/><path d="M5 8h14M8 5.5h.01M8 11h.01M8 15h.01M12 11h5M12 15h5"/>`,
+        hammer: `<path d="m14.5 4.5 5 5M4 20l8.5-8.5M12 6l6 6M6.5 3.5l4 4-3 3-4-4 3-3Z"/>`,
+        paint: `<path d="M4 21h16"/><path d="M7 17h10l-1-8H8l-1 8Z"/><path d="M9 9V5h6v4M10 5V3h4v2"/>`,
+        brick: `<path d="M3 7h18v13H3z"/><path d="M3 12h18M8 7v5M16 7v5M6 12v8M12 12v8M18 12v8"/>`,
+        pin: `<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>`,
+        phone: `<path d="M6.5 3h3l1.5 4-2 1.5a15 15 0 0 0 6.5 6.5l1.5-2 4 1.5v3c0 1.1-.9 2-2 2C11.2 19.5 4.5 12.8 4.5 5c0-1.1.9-2 2-2Z"/>`,
+        whatsapp: `<path d="M20.5 11.7a8.3 8.3 0 0 1-12.3 7.1L4 20l1.3-4.1a8.3 8.3 0 1 1 15.2-4.2Z"/><path d="M9 8.5c.2-.4.5-.5.8-.5h.6c.2 0 .4.2.5.5l.7 1.6c.1.3 0 .5-.2.7l-.6.6c.6 1.1 1.4 1.9 2.5 2.5l.6-.6c.2-.2.4-.3.7-.2l1.6.7c.3.1.5.3.5.5v.6c0 .3-.2.6-.5.8-.6.3-1.5.2-2.4-.2-2.4-1.1-4.2-2.9-5.3-5.3-.4-.9-.5-1.8-.2-2.4Z"/>`,
+        check: `<path d="m5 12 4 4L19 6"/>`,
+        x: `<path d="M6 6l12 12M18 6 6 18"/>`,
+        user: `<circle cx="12" cy="8" r="3.5"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>`,
+        camera: `<path d="M4 7h3l1.5-2h7L17 7h3v12H4V7Z"/><circle cx="12" cy="13" r="3.5"/>`,
+        trash: `<path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/>`,
+        lock: `<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>`,
+        arrow: `<path d="M5 12h14M13 6l6 6-6 6"/>`,
+        plus: `<path d="M12 5v14M5 12h14"/>`,
+        search: `<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4 4"/>`,
+        home: `<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>`,
+        briefcase: `<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M8 6V4h8v2M3 12h18"/>`,
+        shieldSmall: `<path d="M12 2.8 19 6v5c0 4.7-2.8 8.5-7 10-4.2-1.5-7-5.3-7-10V6l7-3.2Z"/><path d="m9 12 2 2 4-4"/>`,
+        info: `<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>`,
+        logout: `<path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-5"/>`,
+        eye: `<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/>`
+      };
+      return `<svg ${base}>${paths[name] || paths.info}</svg>`;
+    }
+
+    function iconFor(service) {
+      return svg(service.icon, 'w-7 h-7');
+    }
+
+    /* ---------------------- COMPONENTS ---------------------- */
+    function header() {
+      return `
+        <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+          <div class="mx-auto flex max-w-7xl items-center gap-2 px-3 py-3 sm:px-5 lg:px-8">
+            <button data-action="home" class="pressable flex min-w-0 items-center gap-2 rounded-2xl p-1.5" aria-label="GharSeva home">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-slate-900 text-white shadow-lg">
+                ${svg('shield', 'h-7 w-7')}
+              </span>
+              <span class="hidden min-w-0 sm:block">
+                <span class="block truncate text-base font-black tracking-tight">GharSeva</span>
+                <span class="block text-[9px] font-bold uppercase tracking-[.18em] text-emerald-600">Direct • Zero Commission</span>
+              </span>
+            </button>
+
+            <div class="ml-auto flex min-w-0 items-center gap-2">
+              <div class="relative hidden w-40 sm:block md:w-52">
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">${svg('pin','w-4 h-4')}</span>
+                <input id="headerPincode" inputmode="numeric" maxlength="6"
+                  value="${esc(state.pincode)}"
+                  data-input="pincode"
+                  placeholder="Pincode"
+                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm font-semibold outline-none transition focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100">
+              </div>
+              <button data-action="toggle-drawer" class="pressable grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-soft" aria-label="Open menu">
+                ${svg('menu','w-6 h-6')}
+              </button>
+            </div>
+          </div>
+        </header>
+      `;
+    }
+
+    function drawer() {
+      if (!state.drawer) return '';
+      return `
+        <div class="fixed inset-0 z-[70] drawer-backdrop" data-action="close-drawer"></div>
+        <aside class="fixed right-0 top-0 z-[80] flex h-full w-[88%] max-w-sm animate-slide-in flex-col bg-white shadow-2xl" onclick="event.stopPropagation()">
+          <div class="flex items-center justify-between border-b border-slate-100 p-5">
+            <div>
+              <div class="font-black tracking-tight">GharSeva</div>
+              <div class="text-xs font-semibold text-slate-500">Service navigation</div>
+            </div>
+            <button data-action="toggle-drawer" class="pressable grid h-11 w-11 place-items-center rounded-2xl bg-slate-100">${svg('close','w-5 h-5')}</button>
+          </div>
+          <nav class="space-y-2 p-4">
+            ${drawerItem('customer', 'Customer Directory', 'home', 'Find a local technician')}
+            ${drawerItem('partner', 'Partner Onboarding', 'briefcase', 'Register as a technician')}
+            ${drawerItem('admin', 'Admin Console', 'lock', 'Approve verified partners')}
+          </nav>
+          <div class="mt-auto border-t border-slate-100 p-5 safe-bottom">
+            <div class="rounded-3xl bg-slate-900 p-5 text-white">
+              <div class="mb-2 flex items-center gap-2 text-emerald-300">${svg('shieldSmall','w-5 h-5')}<span class="text-sm font-bold">Direct marketplace</span></div>
+              <p class="text-xs leading-5 text-slate-300">Customers connect directly with approved local technicians. GharSeva does not deduct a commission from the technician.</p>
+            </div>
+          </div>
+        </aside>
+      `;
+    }
+
+    function drawerItem(id, title, icon, subtitle) {
+      const active = state.screen === id;
+      return `
+        <button data-action="navigate" data-screen="${id}" class="pressable w-full rounded-3xl border p-4 text-left ${active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white'}">
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${active ? 'bg-white/10' : 'bg-slate-100 text-slate-700'}">${svg(icon,'w-5 h-5')}</span>
+            <span class="min-w-0">
+              <span class="block font-bold">${title}</span>
+              <span class="mt-0.5 block text-xs ${active ? 'text-slate-300' : 'text-slate-500'}">${subtitle}</span>
+            </span>
+            ${active ? svg('check','w-5 h-5 ml-auto text-emerald-300') : svg('arrow','w-5 h-5 ml-auto text-slate-300')}
+          </div>
+        </button>
+      `;
+    }
+
+    function footer() {
+      return `
+        <footer class="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
+          <div class="rounded-3xl bg-slate-900 p-6 text-white">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div class="flex items-center gap-2 font-black">${svg('shield','w-6 h-6')} GharSeva</div>
+                <p class="mt-2 max-w-xl text-xs leading-5 text-slate-400">Direct local technician discovery with zero commission to technicians. Prices shown are labour benchmarks; parts/materials and final scope are agreed directly.</p>
+              </div>
+              <div class="text-xs text-slate-400">© ${new Date().getFullYear()} GharSeva</div>
+            </div>
+          </div>
+        </footer>
+      `;
+    }
+
+    function categoryCard(service) {
+      const a = ACCENTS[service.accent];
+      return `
+        <button data-action="category" data-category="${service.id}" class="pressable group rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-soft hover:-translate-y-0.5 hover:shadow-tactile">
+          <div class="mb-5 flex items-start justify-between">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl ${a.icon} ${a.text} ring-8 ${a.ring}">${iconFor(service)}</span>
+            <span class="rounded-full bg-slate-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">${service.subServices.length} services</span>
+          </div>
+          <div class="font-extrabold tracking-tight">${service.name}</div>
+          <div class="mt-1 text-sm leading-5 text-slate-500">${service.description}</div>
+          <div class="mt-5 flex items-center justify-between text-sm font-bold ${a.text}">
+            <span>View services</span>${svg('arrow','w-4 h-4')}
+          </div>
+        </button>
+      `;
+    }
+
+    function customerHome() {
+      return `
+        <main class="animate-fade-in">
+          <section class="mx-auto max-w-7xl px-4 pb-7 pt-7 sm:px-6 sm:pt-10 lg:px-8">
+            <div class="relative overflow-hidden rounded-[2rem] bg-slate-900 p-6 text-white shadow-tactile sm:p-10">
+              <div class="relative z-10 max-w-2xl">
+                <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.16em] text-emerald-300">
+                  ${svg('shieldSmall','w-4 h-4')} Direct • Zero Commission
+                </div>
+                <h1 class="text-3xl font-black tracking-tight sm:text-5xl">Find a local technician.<br><span class="text-slate-400">Book directly.</span></h1>
+                <p class="mt-4 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">Choose a service, enter your pincode and connect with approved on-duty technicians. No marketplace commission is deducted from partners.</p>
+                <div class="mt-6 flex flex-col gap-2 sm:flex-row">
+                  <div class="relative flex-1 sm:max-w-xs">
+                    <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">${svg('pin','w-5 h-5')}</span>
+                    <input id="heroPincode" inputmode="numeric" maxlength="6" value="${esc(state.pincode)}" data-input="pincode"
+                      placeholder="Enter 6-digit pincode"
+                      class="w-full rounded-2xl border border-white/10 bg-white/10 py-3.5 pl-11 pr-4 text-sm font-bold text-white outline-none placeholder:text-slate-500 focus:bg-white/15 focus:ring-4 focus:ring-white/10">
+                  </div>
+                  <button dat
