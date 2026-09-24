@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GharSeva - 100% Verified Doorstep Home Services</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body { background-color: #F1F5F9; font-family: system-ui, -apple-system, sans-serif; }
+    .tactile-card {
+      background: #ffffff;
+      border: 2px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      transition: all 0.2s ease-in-out;
+    }
+    .tactile-card:active { transform: scale(0.96); }
+    .tactile-card:hover { border-color: #94A3B8; }
+  </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <div class="bg-slate-900 text-white p-2 rounded-xl shadow-md">
+        <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-black tracking-tight text-slate-900 leading-none">GharSeva</h1>
+        <p class="text-[10px] font-bold text-emerald-600 tracking-wider uppercase mt-0.5">DIRECT • 0% COMMISSION</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+      <div class="flex items-center bg-slate-100 rounded-full px-3 py-1.5 border border-slate-200 text-xs font-semibold text-slate-700">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1 text-slate-500"></i>
+        <input id="pincodeInput" type="text" placeholder="पिनकोड डालें" maxlength="6" class="bg-transparent outline-none w-20 text-xs" oninput="renderTechnicians()" />
+      </div>
+      <button onclick="toggleMenu(true)" class="p-2 rounded-xl bg-slate-100 border border-slate-200 active:scale-95">
+        <i data-lucide="menu" class="w-5 h-5 text-slate-700"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Side Drawer Menu -->
+  <div id="drawerBackdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden" onclick="toggleMenu(false)"></div>
+  <div id="sideDrawer" class="fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out">
+    <div>
+      <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+        <h2 class="text-base font-bold text-slate-800">GharSeva Menu</h2>
+        <button onclick="toggleMenu(false)" class="p-1 rounded-lg hover:bg-slate-100">
+          <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+        </button>
+      </div>
+      
+      <div class="mt-6 space-y-3">
+        <button onclick="showView('customer')" class="w-full flex items-center space-x-3 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-left font-semibold text-slate-800 active:scale-95">
+          <i data-lucide="home" class="w-5 h-5 text-emerald-600"></i>
+          <span>🏠 Customer Service Hub</span>
+        </button>
+        <button onclick="showView('partner')" class="w-full flex items-center space-x-3 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-left font-semibold text-slate-800 active:scale-95">
+          <i data-lucide="wrench" class="w-5 h-5 text-blue-600"></i>
+          <span>🔧 मिस्त्री पार्टनर पोर्टल</span>
+        </button>
+        <button onclick="showView('admin')" class="w-full flex items-center space-x-3 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-left font-semibold text-slate-800 active:scale-95">
+          <i data-lucide="lock" class="w-5 h-5 text-amber-600"></i>
+          <span>🔒 एडमिन कंट्रोल (Master PIN)</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="text-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+      <p class="text-[11px] font-bold text-slate-600">100% Direct • 0% Middleman</p>
+      <p class="text-[10px] text-slate-400 mt-0.5">मिस्त्री से सीधा संपर्क, नकद/UPI भुगतान</p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-md mx-auto w-full p-4 flex-grow">
+    
+    <!-- 1. CUSTOMER VIEW -->
+    <div id="customerView">
+      <div class="mb-5 mt-2">
+        <h2 class="text-2xl font-black tracking-tight text-slate-900 leading-tight">Book Verified Local Technicians Directly</h2>
+        <p class="text-xs font-medium text-slate-500 mt-1">आपके अपने इलाके के असली कारीगर। सीधा भुगतान — 0% कमीशन।</p>
+        <div class="mt-3 inline-flex items-center px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[11px] font-bold text-emerald-700">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1.5"></i>
+          लाइव सेल्फी वेरिफाइड • सिर्फ On-Duty कारीगर
+        </div>
+      </div>
+
+      <!-- Categories Grid -->
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">सेवा चुनें (Choose Service)</h3>
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div onclick="selectCategory('Electrician')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">⚡</div>
+          <h4 class="font-bold text-sm text-slate-800">इलेक्ट्रीशियन</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">वायरिंग, पंखा, MCB</p>
+        </div>
+        <div onclick="selectCategory('Plumber')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">🚰</div>
+          <h4 class="font-bold text-sm text-slate-800">प्लंबर</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">लीकेज, नल, टंकी फिटिंग</p>
+        </div>
+        <div onclick="selectCategory('Home Appliance')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">❄️</div>
+          <h4 class="font-bold text-sm text-slate-800">होम अप्लायंस</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">गीज़र, कूलर, वॉशिंग मशीन</p>
+        </div>
+        <div onclick="selectCategory('Carpenter')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">🪚</div>
+          <h4 class="font-bold text-sm text-slate-800">कारपेंटर / बढ़ई</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">दरवाजा, लॉक, फर्नीचर</p>
+        </div>
+        <div onclick="selectCategory('Painter')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">🎨</div>
+          <h4 class="font-bold text-sm text-slate-800">पेंटर व पुट्टी</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">दीवार पुट्टी, पेंट, सीलन</p>
+        </div>
+        <div onclick="selectCategory('Mason')" class="tactile-card rounded-3xl p-4 cursor-pointer text-center">
+          <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl">🧱</div>
+          <h4 class="font-bold text-sm text-slate-800">राजमिस्त्री / मेसन</h4>
+          <p class="text-[10px] text-slate-400 mt-0.5">प्लास्टर, टाइल्स रिपेयर</p>
+        </div>
+      </div>
+
+      <!-- Technicians List Area -->
+      <div id="technicianResultsArea" class="hidden">
+        <div class="flex justify-between items-center mb-3">
+          <h3 id="selectedCategoryTitle" class="font-bold text-sm text-slate-700">उपलब्ध कारीगर</h3>
+          <button onclick="clearCategory()" class="text-xs font-semibold text-slate-400 hover:text-slate-600">सभी बदलें</button>
+        </div>
+        <div id="techniciansContainer" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- 2. PARTNER PORTAL VIEW -->
+    <div id="partnerView" class="hidden">
+      <div class="mb-4">
+        <h2 class="text-xl font-black text-slate-900">मिस्त्री पार्टनर पोर्टल</h2>
+        <p class="text-xs text-slate-500">सीधा काम, बिना किसी कमीशन के</p>
+      </div>
+
+      <!-- Registration Form -->
+      <div class="tactile-card rounded-3xl p-5 mb-5">
+        <h3 class="font-bold text-sm text-slate-800 mb-3 border-b pb-2">नया मिस्त्री रजिस्ट्रेशन</h3>
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">पूरा नाम</label>
+            <input id="pName" type="text" placeholder="उदा. रमेश कुमार" class="w-full p-2.5 rounded-xl border border-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">मोबाइल नंबर (कॉल के लिए)</label>
+            <input id="pPhone" type="tel" maxlength="10" placeholder="10 अंकों का नंबर" class="w-full p-2.5 rounded-xl border border-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">काम का प्रकार (Trade)</label>
+            <select id="pTrade" class="w-full p-2.5 rounded-xl border border-slate-200 outline-none bg-white">
+              <option value="Electrician">इलेक्ट्रीशियन (Electrician)</option>
+              <option value="Plumber">प्लंबर (Plumber)</option>
+              <option value="Home Appliance">होम अप्लायंस (Home Appliance)</option>
+              <option value="Carpenter">कारपेंटर (Carpenter)</option>
+              <option value="Painter">पेंटर व पुट्टी (Painter)</option>
+              <option value="Mason">राजमिस्त्री (Mason)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">काम करने का पिनकोड</label>
+            <input id="pPincode" type="text" maxlength="6" placeholder="जैसे 497557" class="w-full p-2.5 rounded-xl border border-slate-200 outline-none" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 mb-1">लाइव सेल्फी (कैमरे से फोटो लें)</label>
+            <input id="pPhoto" type="file" accept="image/*" capture="user" class="w-full text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700" onchange="previewSelfie(event)" />
+            <img id="selfiePreview" class="w-16 h-16 rounded-xl object-cover mt-2 border hidden" />
+          </div>
+          <button onclick="registerPartner()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl mt-2 active:scale-95 shadow-md">
+            रजिस्ट्रेशन सबमिट करें
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ADMIN PORTAL VIEW -->
+    <div id="adminView" class="hidden">
+      <div id="adminLoginBlock" class="tactile-card rounded-3xl p-6 text-center">
+        <i data-lucide="lock" class="w-10 h-10 text-slate-700 mx-auto mb-2"></i>
+        <h2 class="text-base font-bold text-slate-800 mb-1">एडमिन गेटवे</h2>
+        <p class="text-xs text-slate-400 mb-4">मास्टर पिन दर्ज करें (Default: admin1234)</p>
+        <input id="adminPin" type="password" placeholder="PIN" class="p-2.5 rounded-xl border text-center font-bold tracking-widest text-slate-800 outline-none w-36 mb-3" />
+        <br />
+        <button onclick="verifyAdmin()" class="px-6 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl active:scale-95">
+          लॉगिन करें
+        </button>
+      </div>
+
+      <div id="adminDashboardBlock" class="hidden space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-black text-slate-800">एडमिन कंट्रोल</h2>
+          <button onclick="logoutAdmin()" class="text-xs text-red-500 font-bold">लॉगआउट</button>
+        </div>
+        <div id="adminListContainer" class="space-y-3"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    let currentCategory = null;
+    let selfieBase64 = "";
+
+    function getPros() {
+      return JSON.parse(localStorage.getItem('gharseva_pros') || '[]');
+    }
+
+    function savePros(pros) {
+      localStorage.setItem('gharseva_pros', JSON.stringify(pros));
+    }
+
+    function toggleMenu(show) {
+      const drawer = document.getElementById('sideDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if (show) {
+        backdrop.classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+      } else {
+        backdrop.classList.add('hidden');
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function showView(view) {
+      toggleMenu(false);
+      document.getElementById('customerView').classList.add('hidden');
+      document.getElementById('partnerView').classList.add('hidden');
+      document.getElementById('adminView').classList.add('hidden');
+      if (view === 'customer') document.getElementById('customerView').classList.remove('hidden');
+      if (view === 'partner') document.getElementById('partnerView').classList.remove('hidden');
+      if (view === 'admin') document.getElementById('adminView').classList.remove('hidden');
+    }
+
+    function selectCategory(cat) {
+      currentCategory = cat;
+      document.getElementById('selectedCategoryTitle').innerText = `${cat} - उपलब्ध कारीगर`;
+      document.getElementById('technicianResultsArea').classList.remove('hidden');
+      renderTechnicians();
+    }
+
+    function clearCategory() {
+      currentCategory = null;
+      document.getElementById('technicianResultsArea').classList.add('hidden');
+    }
+
+    function renderTechnicians() {
+      if (!currentCategory) return;
+      const container = document.getElementById('techniciansContainer');
+      const enteredPin = document.getElementById('pincodeInput').value.trim();
+      const pros = getPros();
+
+      // Ghost Mode: strictly ON-DUTY & VERIFIED
+      const activePros = pros.filter(p => 
+        p.trade === currentCategory && 
+        p.isApproved === true && 
+        p.isOnDuty === true &&
+        (!enteredPin || p.pincode === enteredPin)
+      );
+
+      container.innerHTML = "";
+
+      if (activePros.length === 0) {
+        container.innerHTML = `
+          <div class="tactile-card rounded-3xl p-6 text-center">
+            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400">
+              <i data-lucide="user-x" class="w-6 h-6"></i>
+            </div>
+            <h4 class="font-bold text-sm text-slate-700">अभी कोई मिस्त्री उपलब्ध नहीं है</h4>
+            <p class="text-xs text-slate-400 mt-1">इस क्षेत्र में सभी कारीगर अभी ऑफलाइन हैं या पिनकोड अलग है।</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      activePros.forEach(p => {
+        const safetyCode = Math.floor(1000 + Math.random() * 9000);
+        container.innerHTML += `
+          <div class="tactile-card rounded-3xl p-4">
+            <div class="flex items-center space-x-3 mb-3">
+              <img src="${p.photo || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100'}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200" />
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="font-bold text-sm text-slate-800">${p.name}</h4>
+                  <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">✅ Verified</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">पिनकोड: ${p.pincode}</p>
+                <div class="flex items-center space-x-1 mt-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span class="text-[10px] font-semibold text-emerald-600">उपलब्ध • तुरंत सेवा</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-slate-50 rounded-xl p-2.5 mb-3 border border-slate-100 text-[11px] text-slate-600 flex justify-between items-center">
+              <span>दरवाजा सुरक्षा कोड (Doorstep PIN):</span>
+              <span class="font-mono font-black text-slate-900 bg-white px-2 py-0.5 rounded border">${safetyCode}</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <a href="tel:${p.phone}" class="flex items-center justify-center space-x-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl active:scale-95 shadow">
+                <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                <span>कॉल करें</span>
+              </a>
+              <a href="https://wa.me/91${p.phone}?text=नमस्ते, मुझे GharSeva से आपका नंबर मिला। काम के लिए संपर्क करना है।" target="_blank" class="flex items-center justify-center space-x-1 py-2.5 bg-emerald-500 text-white font-bold text-xs rounded-xl active:scale-95 shadow">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                <span>व्हाट्सएप</span>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function previewSelfie(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selfieBase64 = e.target.result;
+          const img = document.getElementById('selfiePreview');
+          img.src = selfieBase64;
+          img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function registerPartner() {
+      const name = document.getElementById('pName').value.trim();
+      const phone = document.getElementById('pPhone').value.trim();
+      const trade = document.getElementById('pTrade').value;
+      const pincode = document.getElementById('pPincode').value.trim();
+
+      if (!name || !phone || !pincode) {
+        alert("कृपया नाम, नंबर और पिनकोड भरें!");
+        return;
+      }
+
+      const pros = getPros();
+      pros.push({
+        id: Date.now(),
+        name,
+        phone,
+        trade,
+        pincode,
+        photo: selfieBase64,
+        isApproved: true,
+        isOnDuty: true
+      });
+
+      savePros(pros);
+      alert("पंजीकरण सफल! आप On-Duty हैं और लिस्ट में दिखने लगे हैं।");
+      showView('customer');
+    }
+
+    function verifyAdmin() {
+      const pin = document.getElementById('adminPin').value;
+      if (pin === "admin1234") {
+        document.getElementById('adminLoginBlock').classList.add('hidden');
+        document.getElementById('adminDashboardBlock').classList.remove('hidden');
+        renderAdminList();
+      } else {
+        alert("गलत मास्टर पिन!");
+      }
+    }
+
+    function logoutAdmin() {
+      document.getElementById('adminLoginBlock').classList.remove('hidden');
+      document.getElementById('adminDashboardBlock').classList.add('hidden');
+      document.getElementById('adminPin').value = "";
+    }
+
+    function renderAdminList() {
+      const container = document.getElementById('adminListContainer');
+      const pros = getPros();
+      container.innerHTML = "";
+
+      if (pros.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400">कोई कारीगर दर्ज नहीं है।</p>`;
+        return;
+      }
+
+      pros.forEach(p => {
+        container.innerHTML += `
+          <div class="tactile-card rounded-2xl p-3 flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-xs text-slate-800">${p.name} (${p.trade})</h4>
+              <p class="text-[10px] text-slate-400">${p.phone} • PIN: ${p.pincode}</p>
+              <span class="text-[9px] font-bold ${p.isOnDuty ? 'text-emerald-600' : 'text-slate-400'}">${p.isOnDuty ? '🟢 On-Duty' : '🔴 Off-Duty'}</span>
+            </div>
+            <button onclick="deletePro(${p.id})" class="text-xs font-bold text-
